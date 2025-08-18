@@ -4,43 +4,60 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
+  Patch,
   Post,
   Put,
+  ValidationPipe,
 } from '@nestjs/common';
 import { AppointmentService } from './appointment.service';
+import { CreateAppointmentDto } from './dto/create-appointment.dto';
+import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 
 @Controller({
-  path: 'schedule',
+  path: 'appointments',
 })
 export class AppointmentController {
-  appointmentService: AppointmentService;
+  constructor(private readonly appointmentService: AppointmentService) {}
 
-  constructor(appointmentService: AppointmentService) {
-    this.appointmentService = appointmentService;
+  @Post()
+  create(
+    @Body(new ValidationPipe({ transform: true }))
+    createAppointmentDto: CreateAppointmentDto,
+  ) {
+    return this.appointmentService.create(createAppointmentDto);
   }
 
   @Get()
-  getAppointment() {
-    return this.appointmentService.getAppointment();
+  findAll() {
+    return this.appointmentService.findAll();
   }
 
-  @Get('/schedule/:id')
-  getAppointmentById(@Param('id') id: number) {
-    return this.appointmentService.getAppointmentById(id);
+  @Get(':id')
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.appointmentService.findOne(id);
   }
 
-  @Post()
-  createAppointment(@Body() appointment) {
-    return this.appointmentService.createAppointment(appointment);
+  @Patch(':id')
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body(new ValidationPipe({ transform: true }))
+    updateAppointmentDto: UpdateAppointmentDto,
+  ) {
+    return this.appointmentService.update(id, updateAppointmentDto);
   }
-
-  @Put(':id')
-  updateAppointment() {
-    return this.appointmentService.updateAppointment();
-  }
-
   @Delete(':id')
-  deleteAppointment(@Param('id') id: number) {
-    return this.appointmentService.deleteAppointment(id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.appointmentService.remove(id);
+  }
+
+  @Get('customer/:customerId')
+  findByCustomer(@Param('customerId', ParseIntPipe) customerId: number) {
+    return this.appointmentService.findByCustomer(customerId);
+  }
+
+  @Get('vehicle/:vehicleId')
+  findByVehicle(@Param('vehicleId', ParseIntPipe) vehicleId: number) {
+    return this.appointmentService.findByVehicle(vehicleId);
   }
 }
