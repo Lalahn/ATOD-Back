@@ -39,25 +39,22 @@ export class AppointmentController {
   }
 
   @Patch(':id')
-  update(
+  updatePatch(
     @Param('id', ParseIntPipe) id: number,
-    @Body(new ValidationPipe({ transform: true }))
+    @Body(
+      new ValidationPipe({
+        transform: true,
+        whitelist: true,
+        forbidNonWhitelisted: true,
+      }),
+    )
     updateAppointmentDto: UpdateAppointmentDto,
   ) {
     return this.appointmentService.update(id, updateAppointmentDto);
   }
+
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.appointmentService.remove(id);
-  }
-
-  @Get('customer/:customerId')
-  findByCustomer(@Param('customerId', ParseIntPipe) customerId: number) {
-    return this.appointmentService.findByCustomer(customerId);
-  }
-
-  @Get('vehicle/:vehicleId')
-  findByVehicle(@Param('vehicleId', ParseIntPipe) vehicleId: number) {
-    return this.appointmentService.findByVehicle(vehicleId);
   }
 }

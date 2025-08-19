@@ -4,29 +4,51 @@ import {
   IsBoolean,
   IsDateString,
   IsOptional,
+  ValidateNested,
+  IsString,
 } from 'class-validator';
 import { Type } from 'class-transformer';
+import { CreateVehicleDto } from 'src/vehicle/dto/create-vehicle.dto';
+import { CreateCustomerDto } from 'src/customer/dto/create-customer.dto';
+
+class VehicleDataDto {
+  @IsNotEmpty()
+  @IsString()
+  make: string;
+
+  @IsNotEmpty()
+  @IsString()
+  model: string;
+
+  @IsNotEmpty()
+  @IsString()
+  license_plate: string;
+}
 
 export class CreateAppointmentDto {
-  @IsNotEmpty({ message: 'vehicle_id is required' })
-  @IsInt({ message: 'vehicle_id must be an integer' })
-  @Type(() => Number)
-  vehicle_id: number;
-
-  @IsNotEmpty({ message: 'diagnosis_date is required' })
-  @IsDateString({}, { message: 'diagnosis_date must be a valid date' })
+  @IsNotEmpty()
+  @IsDateString()
   diagnosis_date: string;
 
-  @IsNotEmpty({ message: 'diagnosis_time is required' })
+  @IsNotEmpty()
+  @IsString()
   diagnosis_time: string;
 
-  @IsNotEmpty({ message: 'fault_type_id is required' })
-  @IsInt({ message: 'fault_type_id must be an integer' })
-  @Type(() => Number)
+  @IsNotEmpty()
+  @IsInt()
   fault_type_id: number;
 
   @IsOptional()
-  @IsBoolean({ message: 'request_scan must be a boolean' })
-  @Type(() => Boolean)
-  request_scan?: boolean = false;
+  @IsBoolean()
+  request_scan?: boolean;
+
+  @IsNotEmpty()
+  @ValidateNested()
+  @Type(() => VehicleDataDto)
+  vehicle: VehicleDataDto;
+
+  @IsNotEmpty()
+  @ValidateNested()
+  @Type(() => CreateCustomerDto)
+  customer: CreateCustomerDto;
 }
