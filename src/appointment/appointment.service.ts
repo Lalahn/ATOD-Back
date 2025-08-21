@@ -4,10 +4,10 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { CreateAppointmentDto } from './dto/create-appointment.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 import { Appointment, Customer, Vehicle } from '@prisma/client';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { CreateAppointmentDto } from './dto/create-appointment.dto';
+import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 
 @Injectable()
 export class AppointmentService {
@@ -33,7 +33,7 @@ export class AppointmentService {
         create: customerData,
       });
     } catch (error) {
-      throw new InternalServerErrorException('Error processing customer data.');
+      throw new InternalServerErrorException(error);
     }
 
     let vehicle: Vehicle;
@@ -46,7 +46,7 @@ export class AppointmentService {
         create: { ...vehicleData, customer_id: customer.id },
       });
     } catch (error) {
-      throw new InternalServerErrorException('Error processing vehicle data.');
+      throw new InternalServerErrorException(error);
     }
 
     const faultType = await this.prisma.faultType.findUnique({
